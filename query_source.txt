@@ -1,0 +1,870 @@
+--The Northwind and Pubs databases are available for free by Microsoft 
+--and can be downloaded and used in any SQL Server
+--https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs
+--View the Raw SQL of northwind, 
+--copy it to query window and run it.
+
+SELECT 
+    MIN(unitprice)
+FROM
+ Northwind.dbo.products;
+
+
+SELECT 
+    MIN(unitprice) AS 'min unit price'
+FROM
+    products;
+	
+-- Using a subquery that uses the MIN() function
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice = (SELECT MIN(unitprice) FROM products);
+
+--Will be equal to
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice = 2.50;
+	
+SELECT 
+    MAX(unitprice)
+FROM
+    products;
+
+
+SELECT 
+    MAX(unitprice) AS 'max unit price'
+FROM
+    products;
+	
+-- Using a subquery that uses the MAX() function
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice = (SELECT MAX(unitprice) FROM products);
+
+--Will be equal to
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice = 263.50;
+
+SELECT 
+    AVG(unitprice)
+FROM
+    products;
+
+
+SELECT 
+    AVG(unitprice) AS 'avg unit price'
+FROM
+    products;
+	
+-- Using a subquery that uses the AVG() function
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice > (SELECT AVG(unitprice) FROM products);
+
+--Will be equal to
+
+SELECT 
+    productid, productname, unitprice
+FROM
+    products
+WHERE
+    unitprice > 28.8663;
+
+
+SELECT 
+	SUM(UnitsInStock) AS 'Total Stock' 
+FROM 
+	products
+
+
+SELECT 
+	SUM(UnitsInStock) AS 'Total Discontinued Stock' 
+FROM 
+	products
+WHERE
+	Discontinued = 1
+
+
+SELECT 
+	COUNT(ProductID) AS 'Products Count' 
+FROM 
+	products
+
+
+SELECT 
+	COUNT(ProductID) AS 'No of Discontinued Products' 
+FROM 
+	products
+WHERE
+	Discontinued = 1
+	
+SELECT City FROM Northwind.dbo.Customers
+
+SELECT DISTINCT City FROM Customers
+
+SELECT DISTINCT City, Region FROM Customers
+
+SELECT DISTINCT City, Region FROM Customers
+WHERE Country='UK'
+
+SELECT COUNT(CustomerID) AS 'No of Customers', Country
+FROM Customers
+GROUP BY Country;
+
+SELECT COUNT(CustomerID) AS 'No of Customers', Country
+FROM Customers
+GROUP BY Country;
+ORDER BY COUNT(CustomerID) 
+
+--Using = operator
+-- For string compare use ''
+SELECT CompanyName, city
+  FROM Suppliers  
+  WHERE Country = 'USA'  
+  ORDER BY CompanyName; 
+
+--Using BETWEEN operator
+SELECT * FROM Employees 
+WHERE EmployeeID BETWEEN 1 AND 5
+
+--Using IN operator
+SELECT * FROM Employees 
+WHERE EmployeeID IN (1,2,3)
+
+--Using LIKE operator
+SELECT * FROM Employees 
+WHERE FirstName Like 'Robert'
+
+SELECT FirstName, BirthDate FROM Employees
+ORDER BY BirthDate DESC
+
+--First sort by BD, then by First name
+SELECT FirstName, BirthDate FROM Employees
+ORDER BY BirthDate DESC,
+FirstName ASC;
+
+SELECT ProductName,UnitPrice FROM Products 
+GROUP BY ProductName, UnitPrice
+HAVING AVG(UnitPrice)>20
+
+SELECT * FROM Products 
+
+SELECT ProductName,UnitPrice FROM Products 
+
+--a simple expression:
+SELECT 1 + 1
+
+--combine string using CONCAT()
+SELECT CONCAT(LastName,', ',FirstName) AS fullname
+FROM employees
+
+use employee_db
+go
+CREATE TABLE EmployeeMaster
+(
+	  Id INT IDENTITY PRIMARY KEY,      
+	  EmployeeCode varchar(10),
+	  EmployeeName varchar(25),
+      DepartmentCode varchar(10),
+      LocationCode varchar(10),
+      salary int
+)
+
+TRUNCATE TABLE EmployeeMaster;
+GO;
+
+INSERT into EmployeeMaster(EmployeeCode, EmployeeName, DepartmentCode, LocationCode ,salary)
+VALUES
+('E0001', 'Hulk', 'IT','TVM', 4000),
+('E0002', 'Spiderman', 'IT','TVM',  4000),
+('E0003', 'Ironman', 'QA','KLM', 3000),
+('E0004', 'Superman', 'QA','KLM', 3000),
+('E0005', 'Batman', 'HR','TVM', 5000),
+('E0005', 'Raju', 'HR','KTM', 5000),
+('E0005', 'Radha', 'HR','KTM', 5000)
+
+SELECT EmployeeCode, EmployeeName, DepartmentCode, LocationCode, SUM(salary) TotalCost
+from EmployeeMaster
+Group BY
+  GROUPING SETS
+  (
+    (EmployeeCode, EmployeeName, 
+	DepartmentCode, LocationCode),
+	(DepartmentCode),
+	(LocationCode),
+	()      
+  )
+
+SELECT * from EmployeeMaster WHERE salary = 3000
+
+SELECT * from EmployeeMaster WHERE salary < 3000
+SELECT * from EmployeeMaster WHERE salary <= 3000
+
+SELECT * from EmployeeMaster WHERE salary > 3000
+SELECT * from EmployeeMaster WHERE salary >= 3000
+
+SELECT * from EmployeeMaster WHERE salary !> 3000
+SELECT * from EmployeeMaster WHERE salary !< 3000
+
+SELECT * from EmployeeMaster WHERE salary IN (3000,5000)
+
+//which is equal to
+SELECT * from EmployeeMaster WHERE  salary = 3000 OR salary = 5000
+
+//IN For String
+SELECT * from EmployeeMaster WHERE employeename IN('Raju', 'Radha')
+
+SELECT * from EmployeeMaster WHERE employeename NOT IN('Raju', 'Radha')
+
+SELECT * from EmployeeMaster WHERE salary BETWEEN 3000 AND 5000
+
+SELECT * from EmployeeMaster WHERE salary IS NOT NULL
+
+SELECT * from EmployeeMaster WHERE salary IS NULL
+
+SELECT * from EmployeeMaster WHERE employeename LIKE ‘super'
+
+SELECT * from EmployeeMaster WHERE employeename LIKE ‘sup%'
+
+SELECT * from EmployeeMaster WHERE employeename LIKE ‘%man'
+
+SELECT * from EmployeeMaster WHERE employeename NOT LIKE '%ra%'
+
+//will return 8 letter names starting with Su, containing p or j in between and ending in erman
+SELECT * from EmployeeMaster WHERE employeename LIKE 'Su[pj]erman%'
+
+//will return 4 letter names starting with ra, containing n or j in between and ending in u
+SELECT * from EmployeeMaster WHERE employeename LIKE 'ra[nj]u%'
+
+//will return 4 letter names starting with ra, NOT containing n or j in between and ending in u
+SELECT * from EmployeeMaster WHERE employeename LIKE 'ra[^nj]u%'
+
+SELECT * from EmployeeMaster WHERE employeename NOT LIKE 'raj%'
+
+select * from EmployeeMaster WHERE EXISTS
+(select * from EmployeeMaster where EmployeeName  LIKE 'superman')
+
+use employee_db
+go
+CREATE TABLE EmployeeMaster2
+(
+	  Id INT IDENTITY PRIMARY KEY,      
+	  EmployeeCode varchar(10),
+      EmployeeName varchar(25),
+      DepartmentCode varchar(10),
+      LocationCode varchar(10),
+      salary int
+)
+
+TRUNCATE TABLE EmployeeMaster2;
+GO;
+
+INSERT into EmployeeMaster2(EmployeeCode, EmployeeName, DepartmentCode, LocationCode ,salary)
+VALUES
+('E0001', 'Arun', 'IT','TVM', 5000),
+('E0002', 'Varun', 'IT','TVM',  4000),
+('E0003', 'Kiran', 'QA','KLM', 3050),
+('E0004', 'Superman', 'QA','KLM’, 3000),
+('E0005', 'Midhun', 'HR','TVM', 1000),
+('E0005', 'Singh', 'HR','KTM', 6000),
+('E0005', 'Jyothi', 'HR','KTM', 4000)
+
+select * from EmployeeMaster
+UNION
+select * from EmployeeMaster2
+
+By default UNION will not 
+Fetch Duplicates. Using ALL will get duplicates
+
+select * from EmployeeMaster
+UNION ALL
+select * from EmployeeMaster2
+
+select employeename, salary FROM EmployeeMaster
+WHERE salary > 3000
+UNION
+select employeename, salary from EmployeeMaster2
+
+select * from EmployeeMaster
+INTERSECT
+select * from EmployeeMaster2
+
+select employeename, salary FROM EmployeeMaster
+WHERE salary > 2000
+INTERSECT
+select employeename, salary from EmployeeMaster2
+
+CREATE DATABASE data_types_eg;
+GO
+USE data_types_eg;
+GO
+
+
+CREATE TABLE data_types_eg(
+    bit_col BIT,
+    char_col CHAR(3),
+	date_col DATE,
+	date_time_col DATETIME2(3),
+	date_time_offset_col DATETIMEOFFSET(2),
+ 	dec_col DECIMAL (4, 2),
+    num_col NUMERIC (4, 2),
+	bigint_col bigint,
+	int_col INT,
+	smallint_col SMALLINT,
+	tinyint_col tinyint,
+	nchar_col NCHAR(10),
+	nvarchar_col NVARCHAR(10),
+	time_col TIME(0),
+	varchar_col VARCHAR(10)
+);
+
+INSERT INTO data_types_eg ( 
+bit_col,
+char_col,
+date_col,
+date_time_col,
+date_time_offset_col,
+dec_col,
+num_col,
+bigint_col,
+int_col,
+smallint_col,
+tinyint_col,
+nchar_col,
+nvarchar_col,
+time_col,
+varchar_col
+)
+VALUES
+	(
+		1,
+		'ABC',
+		'2019-01-01',
+		'2018-06-23 07:30:20',
+		'2020-12-20 17:20:12.56 +05:30',
+		10.05,
+		20.05,
+		9223372036854775807,
+		2147483647,
+		32767,
+		255,
+		N'いえ',
+		N'こんにちは',
+		'09:10:00',
+		'John Doe'
+	);
+
+CREATE TABLE usage_logs (
+  logid INT NOT NULL IDENTITY PRIMARY KEY,
+  message char(255) NOT NULL
+)
+
+CREATE TABLE customer_orderdetails (
+  OrderID int NOT NULL,
+  ProductID int NOT NULL,
+  UnitPrice decimal(19,4) NOT NULL,
+  Quantity smallint NOT NULL,
+  Discount float NOT NULL,
+  PRIMARY KEY (OrderID,ProductID),
+ )
+
+CREATE TABLE cricketers  
+( cricketer_id INT NOT NULL,  
+  last_name VARCHAR(50) NOT NULL,  
+  first_name VARCHAR(50) NOT NULL,  
+  salary MONEY  
+);
+
+ALTER TABLE cricketers ADD CONSTRAINT crick_id_pk PRIMARY KEY (cricketer_id);
+
+ALTER INDEX fk_inv_product ON myinventory
+REBUILD;
+
+ALTER INDEX fk_inv_product ON myinventory
+DISABLE;  
+
+ALTER TABLE cricketers 
+DROP CONSTRAINT crick_id_pk
+
+EXEC sp_help cricketers 
+
+CREATE TABLE myproducts  
+( product_id INT NOT NULL IDENTITY PRIMARY KEY,  
+  product_name VARCHAR(50) NOT NULL,  
+  category VARCHAR(25)  
+);  
+
+CREATE TABLE myinventory  
+( inventory_id INT PRIMARY KEY,  
+  product_id INT NOT NULL,  
+  quantity INT,  
+  min_level INT,  
+  max_level INT,  
+  CONSTRAINT fk_inv_product_id  
+    FOREIGN KEY (product_id)  
+    REFERENCES products (product_id)  
+); 
+
+CREATE TABLE myproducts  
+( product_id INT NOT NULL IDENTITY,  
+  product_name VARCHAR(50) NOT NULL,  
+  category VARCHAR(25) 
+  CONSTRAINT myproducts_pk PRIMARY KEY (product_id, product_name) );  
+
+CREATE TABLE myinventory  
+( inventory_id INT PRIMARY KEY,  
+  product_id INT NOT NULL,
+  product_name VARCHAR(50) NOT NULL,        
+  quantity INT,  
+  min_level INT,  
+  max_level INT,  
+  CONSTRAINT fk_inv_product
+    FOREIGN KEY (product_id, product_name)  
+    REFERENCES products(product_id, product_name) ); 
+
+ALTER TABLE table_name  
+NOCHECK CONSTRAINT fk_name;
+
+ALTER TABLE myinventory  
+NOCHECK CONSTRAINT fk_inv_product;
+
+ALTER TABLE myinventory  
+DROP CONSTRAINT fk_inv_product; 
+
+CREATE TABLE usage_logs (
+  logid INT NOT NULL ,
+  message char(255)
+)
+
+ALTER TABLE usage_logs 
+ALTER COLUMN message 
+varchar(200) NOT NULL; 
+
+ALTER TABLE usage_logs 
+ALTER COLUMN message 
+varchar(200) NULL; 
+
+CREATE TABLE usage_logs (
+  logid INT NOT NULL UNIQUE,
+  message char(255)
+)
+
+ALTER TABLE usage_logs 
+ADD CONSTRAINT uniq_msg
+UNIQUE (message); 
+
+ALTER TABLE usage_logs 
+DROP CONSTRAINT uniq_msg; 
+
+CREATE TABLE usage_logs (
+  logid INT NOT NULL UNIQUE CHECK (logid > 10) ,
+  message char(255)
+)
+
+ALTER TABLE usage_logs 
+ADD CONSTRAINT chk_id
+CHECK (logid > 10);
+
+ALTER TABLE usage_logs 
+DROP CONSTRAINT chk_id; 
+
+CREATE TABLE usage_logs (
+  logid INT NOT NULL UNIQUE,
+  message char(255),
+  msgdate DATETIME NOT NULL DEFAULT GETDATE() 
+)
+
+ALTER TABLE usage_logs 
+ADD CONSTRAINT def_date
+DEFAULT (GETDATE()) FOR msgdate;
+
+ALTER TABLE usage_logs 
+DROP CONSTRAINT def_date; 
+
+SELECT ASCII('A')
+-- returns '65', the ASCII value of A
+
+SELECT CHARINDEX('World', 'Hello World') 
+-- returns '7', the position of search string
+
+SELECT CONCAT('Hello', 'World');
+-- returns 'Hello World'
+
+SELECT SOUNDEX('Test'), SOUNDEX('Testing'); 
+-- returns 'T235', Returns 4 char code to denote how the words sound similar
+
+SELECT DIFFERENCE('Test','Testing'); 
+-- returns '3', Comparing two SOUNDEX values, return integer
+
+SELECT LEFT('Hello World', 5), RIGHT('Hello World', 5); 
+-- specific number of characters from the left-side or right-side
+-- returns Hello and World
+
+SELECT LOWER('Hello'), UPPER('Hello'); 
+-- returns hello and HELLO
+
+--remove additional spaces from an string's left or right
+SELECT RTRIM('Hello  '), LTRIM('   World'); 
+
+SELECT REPLICATE('Hello', 3) AS Result; 
+-- repeat the string a specified number of times.
+
+SELECT CURRENT_TIMESTAMP AS DATE;
+--returns current date time
+
+--returns current date time
+SELECT GETDATE() AS Date; 
+
+--time based on the UTC timestamp
+SELECT UTCDATE() AS Date; 
+
+--time with more precision
+SELECT SYSDATETIME() AS Date; 
+
+--to extract the part of the date day, month, or year.
+SELECT DATENAME(day, '2021/12/10') AS Result1,  
+DATENAME(month, '2021/12/10') AS Result2,  
+DATENAME(year, '2021/12/10') AS Result3; 
+
+-- to extract the part of the date as an integer value
+SELECT DATEPART(day, '2021/12/10') AS Result1,  
+DATEPART(month, '2021/12/10') AS Result2,  
+DATEPART(year, '2021/12/10') AS Result3; 
+
+--to extract the part of the date day, month, or year.
+SELECT YEAR('2021/12/10') AS Result1,
+MONTH('2021/12/10') AS Result2,
+DAY('2021/12/10') AS Result3;
+
+-- to extract the part of the date as an integer value
+SELECT DATEPART(day, '2021/12/10') AS Result1,  
+DATEPART(month, '2021/12/10') AS Result2,  
+DATEPART(year, '2021/12/10') AS Result3; 
+
+--to extract the difference of days, months, or years.
+SELECT DATEDIFF(dd,'2020/2/3', '2021/3/5') AS TotalDays,  
+ DATEDIFF(MM,'2020/2/3', '2021/3/5') AS TotalMonths,    
+ DATEDIFF(WK,'2020/2/3', '2021/3/5') AS TotalWeeks; 
+
+SELECT SQRT(25) AS Result1
+--returns square root
+
+--returns absolute value
+SELECT ABS(-20) AS Result1; 
+
+--returns next highest value
+SELECT CEILING(22.19) AS Result1, 
+
+--returns next lowest value
+SELECT FLOOR(22.19) AS Result1, 
+
+SELECT POWER(3,2) AS Result1, 
+--returns exponential
+
+--returns natural logarithm
+SELECT LOG(20) AS Result1; 
+
+--returns sign
+SELECT SIGN(-22) AS Result1, 
+
+SELECT CONVERT(int, 30.55);
+--convert expression to int
+
+--converts string expression to datetime
+SELECT CONVERT(datetime, '2020-08-25');
+
+--convert to varchar of length 100
+SELECT CONVERT(varchar, '2020-08-25', 101);
+
+SELECT CAST(20.65 AS varchar);
+--convert expression to varchar
+
+--converts a value to a datetime datatype:
+SELECT CAST('2020-08-25' AS datetime);
+
+CREATE DATABASE training
+USE training
+
+CREATE TABLE trainee (      
+  id int PRIMARY KEY IDENTITY,     
+  admission_no varchar(45) NOT NULL,  
+  first_name varchar(45) NOT NULL,      
+  last_name varchar(45) NOT NULL,  
+  age int,  
+  city varchar(25) NOT NULL      
+);    
+
+CREATE TABLE fee ( 
+  admission_no varchar(45) NOT NULL,  
+  sem_no int NOT NULL,
+  course varchar(45) NOT NULL,      
+  amount int,    
+); 
+
+CREATE TABLE semester ( 
+  sem_no int NOT NULL,
+  sem_name varchar(10), 
+); 
+
+INSERT INTO trainee (admission_no, first_name, last_name, age,city)       
+VALUES (3354,'Spider', 'Man', 13, 'Texas'),       
+(2135, 'James', 'Bond', 15, 'Alaska'),       
+(4321, 'Jack', 'Sparrow', 14, 'California'),    
+(4213,'John', 'McClane', 17, 'New York'),       
+(5112, 'Optimus', 'Prime', 16, 'Florida'),  
+(6113, 'Captain', 'Kirk', 15, 'Arizona'),    
+(7555,'Harry', 'Potter', 14, 'New York'),       
+(8345, 'Rose', 'Dawson', 13, 'California'); 
+
+INSERT INTO semester (sem_no, sem_name)       
+VALUES 
+(1,'First Sem'),       
+(2, 'Second Sem'),       
+(3, 'Third Sem'),       
+(4, 'Fourth Sem');
+
+INSERT INTO fee (admission_no, sem_no, course, amount)       
+VALUES (3354, 1, 'Java', 20000),       
+(7555, 1, 'Android', 22000),       
+(4321, 2, 'Python', 18000),    
+(8345, 2, 'SQL', 15000), 
+(9345, 2, 'Blockchain', 16000),
+(9321, 3, 'Ethical Hacking', 17000),          
+(5112, 1, 'Machine Learning', 30000); 
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, fee.amount  
+FROM trainee  
+INNER JOIN fee ON trainee.admission_no = fee.admission_no; 
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, fee.amount, semester.sem_name 
+FROM trainee  
+INNER JOIN fee ON trainee.admission_no = fee.admission_no
+INNER JOIN semester ON semester.sem_no = fee.sem_no  
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, fee.amount  
+FROM trainee  
+LEFT OUTER JOIN fee ON trainee.admission_no = fee.admission_no; 
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, fee.amount  
+FROM trainee  
+RIGHT OUTER JOIN fee ON trainee.admission_no = fee.admission_no;
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, fee.amount  
+FROM trainee  
+FULL OUTER JOIN fee ON trainee.admission_no = fee.admission_no;
+
+SELECT t1.first_name, t1.last_name, t2.city
+FROM trainee t1 , trainee t2  
+WHERE t1.admission_no = t2.admission_no
+AND t1.city = t2.city  
+ORDER BY t2.city;
+
+SELECT t1.first_name, t1.last_name, t2.city
+FROM trainee t1 , trainee t2  
+WHERE t1.admission_no != t2.admission_no
+AND t1.city = t2.city  
+ORDER BY t2.city;
+
+SELECT * from trainee 
+CROSS join fee
+
+SELECT trainee.admission_no, trainee.first_name, trainee.last_name, fee.course, Fee.amount_paid  
+FROM trainee  
+CROSS JOIN fee  
+WHERE trainee.admission_no = fee.admission_no; 
+
+CREATE PROCEDURE traineeAgewiseList  
+AS  
+BEGIN  
+    SELECT first_name, age, city  
+    FROM trainee  
+    ORDER BY age;  
+END;
+
+ALTER PROCEDURE traineeAgewiseList  
+AS  
+BEGIN  
+    SELECT first_name, last_name, age, city  
+    FROM trainee  
+    ORDER BY age;  
+END;
+
+SELECT * FROM sys.procedures; 
+
+CREATE PROCEDURE getTraineesFromCity (@city VARCHAR(50))  
+AS  
+BEGIN  
+  SET NOCOUNT ON;  
+  SELECT first_name, last_name, age, city  
+  FROM trainee  
+  WHERE city = @city  
+END 
+
+exec getTraineesFromCity 'texas'
+
+CREATE PROCEDURE getTraineeCount (@traineeCount INT OUTPUT)  
+AS  
+BEGIN  
+    SELECT @traineeCount = COUNT(id)FROM trainee;  
+END; 
+
+-- Declare an int to hold output
+DECLARE @TraineeCount INT   
+  
+-- Execute SP with keyword OUTPUT  
+EXEC getTraineeCount @TraineeCount OUTPUT  
+  
+-- Print the result  
+PRINT @TraineeCount 
+
+-- Run these all at once, because after execution the memory is cleared
+
+SELECT * 
+   FROM trainee 
+   WHERE id IN (SELECT id 
+         FROM trainee 
+         WHERE age > 20) ;
+
+DELETE
+   FROM trainee 
+   WHERE admission_no IN (SELECT admission_no 
+         FROM trainee 
+         WHERE admission_no = 3356) ;
+
+CREATE VIEW [texas trainees] AS
+SELECT first_name, last_name, city
+FROM trainee
+WHERE city = 'Texas';
+
+--The view can be queried later using 
+SELECT * FROM [texas trainees];
+
+use training;
+create trigger my_private_database
+on database
+for
+create_table,alter_table,drop_table
+as
+print'These operations are not allowed in this db'
+rollback;
+
+Use training
+
+DROP TRIGGER my_private_database 
+ON DATABASE 
+
+CREATE TRIGGER my_private_table2
+ON trainee
+AFTER INSERT
+AS
+BEGIN	
+	PRINT 'values inserted'
+END
+
+DROP TRIGGER my_private_table2
+
+CREATE TRIGGER my_private_table2
+ON trainee
+AFTER INSERT
+AS
+BEGIN
+	SET NOCOUNT ON; --do not show the number of affected rows 
+	DECLARE @id INT
+	DECLARE @admission_no INT
+	DECLARE @age INT
+	DECLARE @first_name VARCHAR(45)
+	DECLARE @last_name VARCHAR(45)
+	DECLARE @city VARCHAR(45)
+	SELECT @id = I.id, 
+	@admission_no = I.admission_no,
+	@first_name = I.first_name, 
+	@last_name = I.last_name, 
+	@age =I.age, 
+	@city =I.city
+	FROM INSERTED I
+	INSERT INTO trainee_backup
+	VALUES(@id,@admission_no, @first_name, 	@last_name, @age, @city)
+	PRINT 'values inserted in trainee and 	backup tables'
+END
+
+SELECT * FROM trainee
+SELECT * FROM trainee_backup
+DROP TRIGGER my_private_table2
+
+CREATE TRIGGER my_private_table2
+ON trainee
+INSTEAD OF INSERT
+AS
+BEGIN	
+	PRINT 'values not inserted'
+END
+
+-- Start a new transaction    
+BEGIN TRANSACTION  
+
+-- SQL Statements  
+ INSERT INTO semester (sem_no, sem_name) VALUES (5, 'sem 5') 
+ UPDATE semester SET sem_name = 's5' WHERE sem_no = 5  
+
+ -- Commit changes   
+COMMIT TRANSACTION 
+
+-- Start a new transaction    
+BEGIN TRANSACTION  
+
+-- SQL Statements  
+ INSERT INTO semester (sem_no, sem_name) VALUES (6, 'sem 6') 
+ UPDATE semester SET sem_name = 's6' WHERE sem_no = 6  
+
+--Undo Changes  
+ROLLBACK TRANSACTION 
+
+BEGIN TRANSACTION  
+
+ INSERT INTO semester (sem_no, sem_name) VALUES (6, 'sem 6') 
+ UPDATE semester SET sem_no = 'six' WHERE sem_no = 6 
+
+-- Check for error using system variable @@ERROR  
+IF(@@ERROR > 0)  
+BEGIN  
+    ROLLBACK TRANSACTION  
+END  
+ELSE  
+BEGIN  
+   COMMIT TRANSACTION  
+END 
+
+-- Start a new transaction    
+BEGIN TRANSACTION  
+
+-- SQL Statements  
+ INSERT INTO semester (sem_no, sem_name) VALUES (6, 'sem 6') 
+ UPDATE semester SET sem_no = 'six' WHERE sem_no = 6 
+
+ -- Commit changes   
+COMMIT TRANSACTION 
+
+SELECT *
+INTO trainee_backup_new 
+FROM trainee_backup
